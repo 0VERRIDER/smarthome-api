@@ -1,10 +1,30 @@
 const express = require("express")
+const mongoose  = require("mongoose")
 const app = express()
 const createRoute = require("./api/routes/create")
 //body parser
 app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 
+//MongoDB call
+try{
+    mongoose.connect(process.env.MONGODB_URL,{
+        useNewUrlParser: true ,
+        useUnifiedTopology: true
+    })
+    mongoose.set('useCreateIndex', true);
+    }
+    catch(error){
+        app.use((req,res,next) =>{
+            res.status(500).json({
+                error:{
+                    message : "Something went wrong!",
+                    details : error
+                }
+            });
+        handleError(error);
+    });
+    }
 //routes 
 app.use("/api/create",createRoute)
 //error handlers
