@@ -1,6 +1,6 @@
 const express = require("express")
 const app = express()
-const createRoute = require("./api/create")
+const createRoute = require("./api/routes/create")
 //body parser
 app.use(express.urlencoded({extended:false}));
 app.use(express.json());
