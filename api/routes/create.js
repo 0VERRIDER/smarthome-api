@@ -19,7 +19,7 @@ router.post('/',(req,res,next)=>{
         });
     }).catch( err =>{
         try
-        {res.status(200).json({
+        {res.status(409).json({
             message : err.keyPattern['email']>0? "User already exist" : "Invalid entries found",
         
         });
