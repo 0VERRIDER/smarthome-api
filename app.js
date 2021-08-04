@@ -25,7 +25,7 @@ try {
     });
 }
 //routes
-app.use("/api/create", createRoute);
+app.use("/user/create", createRoute);
 //error handlers
 app.use((req, res, next) => {
     const error = new Error("Not Found");
