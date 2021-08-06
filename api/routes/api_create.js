@@ -13,29 +13,28 @@ router.post('/',(req,res,next)=>{
         api_key : req.body.api_key,
         req_type: req.body.type 
     });
-    api.save().then(result => {
+   api.save().then(result => {
        
         return res.status(201).json({
             message : "Thank you API registred successfully.",
             result: result
         });
     }).catch( err =>{
+        
         try
         {res.status(409).json({
-            message : err.keyPattern['api_name']>0? "User already exist" : "Invalid entries found",
+            message : err.keyPattern['api_name']>0 && err.keyPattern['registred_email']>0? "API already exist" : "Invalid entries found",
         
         });
        
 }
 catch(err){
     res.status(403).json({
-            error: "Invalid entries found"
+            error: err
         });
     }
     
     });
-
-
 
 })
 
