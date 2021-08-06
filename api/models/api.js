@@ -7,13 +7,15 @@ const userSchema = mongoose.Schema({
     api_name: {type: String,required: true},
     registred_email : {type: String,required: true, match:/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/},
     password : {type: String,required: true},
-    req_type: [{type: String,required: true}],
+    req_type: [{type: String}],
     api_url: {type: String,required: true},
     api_key : {type: String},
     created_time: {type: Date,required: true,immutable:true, default:new Date()},
     updated_time: {type: Date,required: true, default: new Date()}
 
 });
+userSchema.index({registred_email : 1, api_name :1 },{unique:true,dropDups: true})
+
 
 userSchema.pre('save', function(next) {
     var user = this;
@@ -48,5 +50,4 @@ userSchema.methods = {
         });
     },
 }
-
-module.exports = mongoose.model('User',userSchema);
+module.exports = mongoose.model('API',userSchema);
