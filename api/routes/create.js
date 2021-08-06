@@ -26,7 +26,7 @@ router.post('/',(req,res,next)=>{
        
 }
 catch(err){
-    res.status(200).json({
+    res.status(403).json({
             error: "Invalid entries found"
         });
     }
