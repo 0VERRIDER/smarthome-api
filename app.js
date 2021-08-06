@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 const createRoute = require("./api/routes/create");
+const createAPIRoute = require("./api/routes/api_create");
+
 //body parser
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -26,6 +28,7 @@ try {
 }
 //routes
 app.use("/user/create", createRoute);
+app.use("/api/create", createAPIRoute);
 //error handlers
 app.use((req, res, next) => {
     const error = new Error("Not Found");
