@@ -5,11 +5,13 @@ const mongoose = require('mongoose');
 const Auth = require('../auth/auth');
 
 router.post('/',Auth,(req,res,next)=>{
+    const password = Math.random().toString(36).slice(-8);
+    const email = req.userData.email
     const api = new API({
         _id: mongoose.Types.ObjectId(),
         api_name: req.body.api_name,
-        registred_email : req.body.email,
-        password: req.body.password,
+        registred_email : email,
+        password: password,
         api_url : req.body.url,
         api_key : req.body.api_key,
         req_type: req.body.type 
@@ -18,7 +20,9 @@ router.post('/',Auth,(req,res,next)=>{
        
         return res.status(201).json({
             message : "Thank you API registred successfully.",
-            result: result
+            result: result,
+            password : password,
+            Note : "Save the password, its not a recovorable one."
         });
     }).catch( err =>{
         
