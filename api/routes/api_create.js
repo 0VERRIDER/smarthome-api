@@ -2,8 +2,9 @@ const express = require('express');
 const router   = express.Router();
 const API = require('../models/api');
 const mongoose = require('mongoose');
+const Auth = require('../auth/auth');
 
-router.post('/',(req,res,next)=>{
+router.post('/',Auth,(req,res,next)=>{
     const api = new API({
         _id: mongoose.Types.ObjectId(),
         api_name: req.body.api_name,
