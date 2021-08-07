@@ -10,6 +10,7 @@ const userSchema = mongoose.Schema({
     req_type: [{type: String}],
     api_url: {type: String,required: true},
     api_key : {type: String},
+    key : {type: String},
     created_time: {type: Date,required: true,immutable:true, default:new Date()},
     updated_time: {type: Date,required: true, default: new Date()}
 
