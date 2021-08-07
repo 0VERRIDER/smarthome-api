@@ -8,7 +8,7 @@ const axios = require("axios");
 router.get('/',(req,res,next)=>{
     const email = req.body.email
     const password = req.body.password
-    const add_url = (req.body.param == undefined ) ? "": req.body.param
+    const add_url = (req.body.param == undefined ) ? "":'/'+ req.body.param
     const name = req.body.name
     const content = req.body.content
     
@@ -17,6 +17,7 @@ router.get('/',(req,res,next)=>{
             {
         if(err) throw err
         if(!api) throw "User not found"
+        if(!(api.req_type.includes("GET".toUpperCase()))) throw "Illegal request type"
         api.comparePassword(password, function(err, isMatch){
             if(err) throw "Authentication error"
             if(isMatch)
@@ -26,9 +27,7 @@ router.get('/',(req,res,next)=>{
                     url: api.api_url + add_url,
                     data: content
                   }).then(response =>{
-                    res.status(200).json({
-                        response : response.data
-                      })
+                    res.status(200).json(response.data)
                   }).catch(err =>{
                     res.status(400).json({
                         error : err.message
@@ -51,10 +50,7 @@ router.get('/',(req,res,next)=>{
     })
     
     
-    });
-    
-// POST REQUEST HANDLE
-router.post('/',(req,res,next)=>{
+    }).post('/',(req,res,next)=>{
 const email = req.body.email
 const password = req.body.password
 const add_url = (req.body.param == undefined ) ? "": req.body.param
@@ -66,6 +62,8 @@ const content = req.body.content
         {
     if(err) throw err
     if(!api) throw "User not found"
+    if(!(api.req_type.includes("POST".toUpperCase()))) throw "Illegal request type"
+
     api.comparePassword(password, function(err, isMatch){
         if(err) throw "Authentication error"
         if(isMatch)
@@ -100,10 +98,7 @@ catch(err){
 })
 
 
-});
-
-//PUT REQUEST HANDLE
-router.put('/',(req,res,next)=>{
+}).put('/',(req,res,next)=>{
     const email = req.body.email
     const password = req.body.password
     const add_url = (req.body.param == undefined ) ? "": req.body.param
@@ -115,6 +110,8 @@ router.put('/',(req,res,next)=>{
             {
         if(err) throw err
         if(!api) throw "User not found"
+        if(!(api.req_type.includes("PUT".toUpperCase()))) throw "Illegal request type"
+
         api.comparePassword(password, function(err, isMatch){
             if(err) throw "Authentication error"
             if(isMatch)
@@ -149,10 +146,7 @@ router.put('/',(req,res,next)=>{
     })
     
     
-    });
-
-    //DELETE REQUEST HANDLE
-    router.delete('/',(req,res,next)=>{
+    }).delete('/',(req,res,next)=>{
         const email = req.body.email
         const password = req.body.password
         const add_url = (req.body.param == undefined ) ? "": req.body.param
@@ -164,6 +158,8 @@ router.put('/',(req,res,next)=>{
                 {
             if(err) throw err
             if(!api) throw "User not found"
+            if(!(api.req_type.includes("DELETE".toUpperCase()))) throw "Illegal request type"
+
             api.comparePassword(password, function(err, isMatch){
                 if(err) throw "Authentication error"
                 if(isMatch)
@@ -198,8 +194,7 @@ router.put('/',(req,res,next)=>{
         })
         
         
-        });
-        router.patch('/',(req,res,next)=>{
+        }).patch('/',(req,res,next)=>{
             const email = req.body.email
             const password = req.body.password
             const add_url = req.body.param
@@ -211,6 +206,8 @@ router.put('/',(req,res,next)=>{
                     {
                 if(err) throw err
                 if(!api) throw "User not found"
+                if(!(api.req_type.includes("PATCH".toUpperCase()))) throw "Illegal request type"
+
                 api.comparePassword(password, function(err, isMatch){
                     if(err) throw "Authentication error"
                     if(isMatch)
