@@ -8,7 +8,10 @@ module.exports = (req,res,next)=>{
 }
 catch(err){
     return res.status(401).json({
-        message : "Authentication Error"
+        message: "Authentication error !",
+        do : "/user/login",
+        type : "POST",
+        param : "username,password"
     });
 }
 }
