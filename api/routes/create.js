@@ -4,7 +4,7 @@ const User = require('../models/user');
 const mongoose = require('mongoose');
 const Auth = require('../auth/auth');
 
-router.post('/',Auth,(req,res,next)=>{
+router.post('/',(req,res,next)=>{
     const user = new User({
         _id: mongoose.Types.ObjectId(),
         user_name: req.body.username,
