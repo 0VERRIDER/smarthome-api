@@ -5,6 +5,7 @@ const cors = require('cors');
 const app = express();
 const createRoute = require("./api/routes/create");
 const createAPIRoute = require("./api/routes/api_create");
+const userLogin = require("./api/routes/login")
 
 //body parser
 app.use(express.urlencoded({ extended: false }));
@@ -36,6 +37,8 @@ try {
 //routes
 app.use("/user/create", createRoute);
 app.use("/api/create", createAPIRoute);
+app.use("/user/login", userLogin);
+
 //error handlers
 app.use((req, res, next) => {
     const error = new Error("Not Found");
