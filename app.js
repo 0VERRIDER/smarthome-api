@@ -3,11 +3,11 @@ const mongoose = require("mongoose");
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const app = express();
-const createRoute = require("./api/routes/create");
-const createAPIRoute = require("./api/routes/api_create");
-const userLogin = require("./api/routes/login")
-const apiCall = require("./api/routes/api_calls")
+  const apiCall = require("./api/routes/api_calls")
 
+
+ 
+  
 //body parser
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -16,14 +16,10 @@ app.use(express.json());
 app.use(cors());
 //cookie handler
 app.use(cookieParser());
-
+const uri = "mongodb+srv://anshil:sachurichusachurichu@cluster0.n9dcg.mongodb.net/?retryWrites=true&w=majority";
 //MongoDB call
 try {
-    mongoose.connect(process.env.MONGODB_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
-    mongoose.set("useCreateIndex", true);
+
 } catch (error) {
     app.use((req, res, next) => {
         res.status(500).json({
@@ -36,10 +32,9 @@ try {
     });
 }
 //routes
-app.use("/user/create", createRoute);
-app.use("/api/create", createAPIRoute);
-app.use("/api/call", apiCall);
-app.use("/user/login", userLogin);
+
+app.use("/devices", apiCall);
+
 
 //error handlers
 app.use((req, res, next) => {

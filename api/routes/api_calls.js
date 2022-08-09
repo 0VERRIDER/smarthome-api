@@ -1,246 +1,136 @@
 const express = require('express');
+var firebase = require("firebase-admin");
 const router   = express.Router();
-const mongoose = require('mongoose');
-const API = require('../models/api');
-const axios = require("axios");
+
+var serviceAccount = require("../../serviceAccountKey.json");
+
+firebase.initializeApp({
+  credential: firebase.credential.cert(serviceAccount),
+  databaseURL: "https://smarthome-karunya-default-rtdb.firebaseio.com"
+});
 
 
-router.get('/',(req,res,next)=>{
-    const email = req.body.email
-    const password = req.body.password
-    const add_url = (req.body.param == undefined ) ? "":'/'+ req.body.param
-    const name = req.body.name
-    const content = req.body.content
+var db = firebase.database();
+const refDoor = db.ref('/devices/door/');
+const refWindow = db.ref('/devices/window/');
+const refHvac = db.ref("/devices/hvac/");
+const refLights = db.ref('/devices/lights/');
+const refWaterTank = db.ref('/devices/WaterTank/');
+
+router.get('/door',(req,res,next)=>{
     
-        API.findOne({ registred_email: email, api_name: name }, (err, api) => {
-            try
-            {
-        if(err) throw err
-        if(!api) throw "User not found"
-        if(!(api.req_type.includes("GET".toUpperCase()))) throw "Illegal request type"
-        api.comparePassword(password, function(err, isMatch){
-            if(err) throw "Authentication error"
-            if(isMatch)
-            {
-                axios({
-                    method: 'get',
-                    url: api.api_url + add_url,
-                    data: content
-                  }).then(response =>{
-                    res.status(200).json(response.data)
-                  }).catch(err =>{
-                    res.status(400).json({
-                        error : err.message
-                    })
-                  });
-               
-            }
-            else{
-                res.status(403).json({
-                    err :"Authentication Error"
-                  })
-            }
+    refDoor.on('value',(snapshot)=>{
+        res.status(200).json({
+            status: snapshot.val()
         });
-    }
-    catch(err){
-        res.status(400).json({
-          err : err
-        })
-    }
     })
     
-    
-    }).post('/',(req,res,next)=>{
-const email = req.body.email
-const password = req.body.password
-const add_url = (req.body.param == undefined ) ? "": req.body.param
-const name = req.body.name
-const content = req.body.content
-
-    API.findOne({ registred_email: email, api_name: name }, (err, api) => {
-        try
-        {
-    if(err) throw err
-    if(!api) throw "User not found"
-    if(!(api.req_type.includes("POST".toUpperCase()))) throw "Illegal request type"
-
-    api.comparePassword(password, function(err, isMatch){
-        if(err) throw "Authentication error"
-        if(isMatch)
-        {
-            axios({
-                method: 'post',
-                url: api.api_url + add_url,
-                data: content
-              }).then(response =>{
+    }).post('/door/:value',(req,res,next)=>{
+        const status = req.params.value;
+        refDoor.set(status, function(error) {
+            if (error) {
+              // The write failed...
+              console.log("Failed with error: " + error)
+            } else {
+              // The write was successful...
+              console.log("success")
+            }
+        })
+        res.status(200).json({
+            status: status
+        });
+        }).get('/window',(req,res,next)=>{
+            refWindow.on('value',(snapshot)=>{
                 res.status(200).json({
-                    Messsage : "Uploaded"
-                  })
-              }).catch(err =>{
-                res.status(400).json({
-                    error : err.message
-                })
-              });
-           
-        }
-        else{
-            res.status(403).json({
-                err :"Authentication Error"
-              })
-        }
-    });
-}
-catch(err){
-    res.status(400).json({
-      err : err
-    })
-}
-})
-
-
-}).put('/',(req,res,next)=>{
-    const email = req.body.email
-    const password = req.body.password
-    const add_url = (req.body.param == undefined ) ? "": req.body.param
-    const name = req.body.name
-    const content = req.body.content
-    
-        API.findOne({ registred_email: email, api_name: name }, (err, api) => {
-            try
-            {
-        if(err) throw err
-        if(!api) throw "User not found"
-        if(!(api.req_type.includes("PUT".toUpperCase()))) throw "Illegal request type"
-
-        api.comparePassword(password, function(err, isMatch){
-            if(err) throw "Authentication error"
-            if(isMatch)
-            {
-                axios({
-                    method: 'put',
-                    url: api.api_url + add_url,
-                    data: content
-                  }).then(response =>{
-                    res.status(200).json({
-                        Messsage : "Uploaded"
-                      })
-                  }).catch(err =>{
-                    res.status(400).json({
-                        error : err.message
-                      })
-                  });
-               
-            }
-            else{
-                res.status(403).json({
-                    err :"Authentication Error"
-                  })
-            }
-        });
-    }
-    catch(err){
-        res.status(400).json({
-          err : err
-        })
-    }
-    })
-    
-    
-    }).delete('/',(req,res,next)=>{
-        const email = req.body.email
-        const password = req.body.password
-        const add_url = (req.body.param == undefined ) ? "": req.body.param
-        const name = req.body.name
-        const content = req.body.content
-        
-            API.findOne({ registred_email: email, api_name: name }, (err, api) => {
-                try
-                {
-            if(err) throw err
-            if(!api) throw "User not found"
-            if(!(api.req_type.includes("DELETE".toUpperCase()))) throw "Illegal request type"
-
-            api.comparePassword(password, function(err, isMatch){
-                if(err) throw "Authentication error"
-                if(isMatch)
-                {
-                    axios({
-                        method: 'delete',
-                        url: api.api_url + add_url,
-                        data: content
-                      }).then(response =>{
-                        res.status(200).json({
-                            Messsage : "DELETED"
-                          })
-                      }).catch(err =>{
-                        res.status(400).json({
-                            error : err.message
-                        })
-                      });
-                   
-                }
-                else{
-                    res.status(403).json({
-                        err :"Authentication Error"
-                      })
-                }
-            });
-        }
-        catch(err){
-            res.status(400).json({
-              err : err
-            })
-        }
-        })
-        
-        
-        }).patch('/',(req,res,next)=>{
-            const email = req.body.email
-            const password = req.body.password
-            const add_url = req.body.param
-            const name = req.body.name
-            const content = req.body.content
-            
-                API.findOne({ registred_email: email, api_name: name }, (err, api) => {
-                    try
-                    {
-                if(err) throw err
-                if(!api) throw "User not found"
-                if(!(api.req_type.includes("PATCH".toUpperCase()))) throw "Illegal request type"
-
-                api.comparePassword(password, function(err, isMatch){
-                    if(err) throw "Authentication error"
-                    if(isMatch)
-                    {
-                        axios({
-                            method: 'patch',
-                            url: api.api_url + add_url,
-                            data: content
-                          }).then(response =>{
-                            res.status(200).json({
-                                Messsage : "Patched"
-                              })
-                          }).catch(err =>{
-                            res.status(400).json({
-                                error : err.message
-                            })
-                          });
-                       
-                    }
-                    else{
-                        res.status(403).json({
-                            err :"Authentication Error"
-                          })
-                    }
+                    status: snapshot.val()
                 });
-            }
-            catch(err){
-                res.status(400).json({
-                  err : err
-                })
-            }
             })
+            }).post('/window/:value',(req,res,next)=>{
+                const status = req.params.value;
+                refWindow.set(status, function(error) {
+                    if (error) {
+                      // The write failed...
+                      res.status(404).json({
+                        status: false
+                    });
+                    } else {
+                      // The write was successful...
+                      res.status(200).json({
+                        status: true
+                    });
+                    }
+                })
             
-            
-            });
+                }).get('/waterTank',(req,res,next)=>{
+                    refWaterTank.on('value',(snapshot)=>{
+                        res.status(200).json({
+                            status: snapshot.val()
+                        });
+                    })
+                    }).post('/waterTank/:value',(req,res,next)=>{
+                        const status = req.params.value;
+                        refWaterTank.set(status, function(error) {
+                            if (error) {
+                              // The write failed...
+                              res.status(404).json({
+                                status: false
+                            });
+                            } else {
+                              // The write was successful...
+                              res.status(200).json({
+                                status: true
+                            });
+                            }
+                        })
+                        }).get('/HVAC',(req,res,next)=>{
+                            refHvac.on('value',(snapshot)=>{
+                                res.status(200).json({
+                                    status: snapshot.val()
+                                });
+                            })
+                            res.status(200).json({
+                                status: true,
+                                temprature: 27,
+                                atTemp:27,
+                                fanspeed:2,
+                            });
+                            }).post('/HVAC/:value',(req,res,next)=>{
+                                const status = req.params.value;
+                                refHvac.set(status, function(error) {
+                                    if (error) {
+                                      // The write failed...
+                                      res.status(404).json({
+                                        status: false
+                                    });
+                                    } else {
+                                      // The write was successful...
+                                      res.status(200).json({
+                                        status: true
+                                    });
+                                    }
+                                })
+
+                              
+                                }).get('/light/',(req,res,next)=>{
+                                    refLights.on('value',(snapshot)=>{
+                                        res.status(200).json({
+                                            status: snapshot.val()
+                                        });
+                                    });
+                                    }).post('/light/:value',(req,res,next)=>{
+                                        const status = req.params.value;
+                                        refLights.set(status, function(error) {
+                                            if (error) {
+                                              // The write failed...
+                                              res.status(404).json({
+                                                status: false
+                                            });
+                                            } else {
+                                              // The write was successful...
+                                              res.status(200).json({
+                                                status: true
+                                            });
+                                            }
+                                        });
+                                        });
 module.exports = router;
